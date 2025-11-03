@@ -28,7 +28,7 @@
     }).addTo(map);
 
     //Function for fetching from wikipedia
-    async function fetchNearbyWikipedia(lat, lon, radius = 10000) {
+    async function fetchNearbyWikipedia(lat, lon, radius = 100000) {
       const url = `https://mk.wikipedia.org/w/api.php?action=query&generator=geosearch&ggscoord=${lat}%7C${lon}&ggsradius=${radius}&ggslimit=30&prop=coordinates|pageimages|info&inprop=url&piprop=thumbnail&pithumbsize=100&format=json&origin=*`;
 
       const res = await fetch(url);
