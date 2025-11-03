@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OSM + Македонска Википедија (Скопје)</title>
+  <title>Споменици во Скопје</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     html, body, #map { height: 100%; margin: 0; padding: 0; }
@@ -27,7 +27,7 @@
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
 
-    // Функција за преземање на блиски статии со слики од Македонската Википедија
+    //Function for fetching from wikipedia
     async function fetchNearbyWikipedia(lat, lon, radius = 10000) {
       const url = `https://mk.wikipedia.org/w/api.php?action=query&generator=geosearch&ggscoord=${lat}%7C${lon}&ggsradius=${radius}&ggslimit=30&prop=coordinates|pageimages|info&inprop=url&piprop=thumbnail&pithumbsize=100&format=json&origin=*`;
 
@@ -62,7 +62,7 @@
       }
     }
 
-    // Вчитај статии од Македонската Википедија околу Скопје
+    // Function for fetching around this cordinates
     fetchNearbyWikipedia(41.9981, 21.4254);
   </script>
 </body>
