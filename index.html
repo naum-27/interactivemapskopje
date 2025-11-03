@@ -1,1 +1,69 @@
+<!doctype html>
+<html lang="mk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Споменици во Скопје</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    html, body, #map { height: 100%; margin: 0; padding: 0; }
+    .wiki-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid white;
+      box-shadow: 0 0 4px rgba(0,0,0,0.4);
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map').setView([41.9981, 21.4254], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
 
+    //Function for fetching from wikipedia
+    async function fetchNearbyWikipedia(lat, lon, radius = 10000) {
+      const url = `https://mk.wikipedia.org/w/api.php?action=query&generator=geosearch&ggscoord=${lat}%7C${lon}&ggsradius=${radius}&ggslimit=30&prop=coordinates|pageimages|info&inprop=url&piprop=thumbnail&pithumbsize=100&format=json&origin=*`;
+
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (data.query && data.query.pages) {
+        Object.values(data.query.pages).forEach(page => {
+          const coords = page.coordinates ? [page.coordinates[0].lat, page.coordinates[0].lon] : null;
+          if (!coords) return;
+
+          const imgUrl = page.thumbnail ? page.thumbnail.source : null;
+
+          let icon;
+          if (imgUrl) {
+            icon = L.icon({
+              iconUrl: imgUrl,
+              iconSize: [40, 40],
+              className: 'wiki-icon'
+            });
+          } else {
+            icon = L.icon({
+              iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/6/63/Wikipedia-logo.png',
+              iconSize: [30, 30]
+            });
+          }
+
+          L.marker(coords, { icon: icon })
+            .addTo(map)
+            .bindPopup(`<strong><a href="${page.fullurl}" target="_blank">${page.title}</a></strong>`);
+        });
+      }
+    }
+
+    // Function for fetching around this cordinates
+    fetchNearbyWikipedia(41.9981, 21.4254);
+  </script>
+</body>
+</html>
